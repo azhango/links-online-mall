@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: mumumall
+
+  # 邮件服务器配置
+  mail:
+    host: smtp.qq.com
+    # 账号
+    username:
+    # 邮箱专用密码
+    password:
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            port: 465
+
+  # 默认 dev 环境
+  profiles:
+    active: pord
+
+  # 支持 swagger
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  # 设置上传文件大小
+  servlet:
+    multipart.max-file-size: 100MB
+    multipart.max-request-size: 100MB
+
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+
+server:
+  address: 0.0.0.0
+
+  port: 5523
+
+  servlet:
+    # session 失效时间 1 天
+    session:
+      timeout: 86400
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: isDelete # 全局逻辑删除的实体字段名
+      logic-delete-value: 1 # 逻辑已删除值（默认为 1）
+      logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
+    banner: false # 取消Logo

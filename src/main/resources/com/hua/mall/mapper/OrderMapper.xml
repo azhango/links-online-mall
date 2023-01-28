@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hua.mall.mapper.OrderMapper">
+
+    <resultMap id="BaseResultMap" type="com.hua.mall.model.entity.Order">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="orderNo" column="order_no" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="totalPrice" column="total_price" jdbcType="INTEGER"/>
+        <result property="receiverName" column="receiver_name" jdbcType="VARCHAR"/>
+        <result property="receiverMobile" column="receiver_mobile" jdbcType="VARCHAR"/>
+        <result property="receiverAddress" column="receiver_address" jdbcType="VARCHAR"/>
+        <result property="orderStatus" column="order_status" jdbcType="INTEGER"/>
+        <result property="postage" column="postage" jdbcType="INTEGER"/>
+        <result property="paymentType" column="payment_type" jdbcType="INTEGER"/>
+        <result property="deliveryTime" column="delivery_time" jdbcType="TIMESTAMP"/>
+        <result property="payTime" column="pay_time" jdbcType="TIMESTAMP"/>
+        <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,order_no,user_id,
+        total_price,receiver_name,receiver_mobile,
+        receiver_address,order_status,postage,
+        payment_type,delivery_time,pay_time,
+        end_time,create_time,update_time
+    </sql>
+
+    <resultMap id="OrderStatisticsMap" type="com.hua.mall.model.vo.OrderStatisticsVO">
+        <result property="days" column="days" jdbcType="TIMESTAMP"/>
+        <result property="amount" column="amount" jdbcType="INTEGER"/>
+    </resultMap>
+    <select id="selectOrderStatistics" resultMap="OrderStatisticsMap">
+        select date_format(from_unixtime(UNIX_TIMESTAMP(CREATE_TIME)), "%Y-%m-%d") as days, count(*) as amount
+        from mall_order
+        <where>
+            <if test="query.startDate != null">
+                <![CDATA[ and create_time >= #{query.startDate} ]]>
+            </if>
+            <if test="query.endDate != null">
+                <![CDATA[ and create_time <= #{query.endDate} ]]>
+            </if>
+        </where>
+        group by days order by days
+    </select>
+</mapper>

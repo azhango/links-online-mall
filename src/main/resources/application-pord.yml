@@ -1,0 +1,40 @@
+
+# 生产环境配置
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://huazll5510.mysql.rds.aliyuncs.com:3306/qf_mall
+    username: huauz
+    password: Huauz125510
+
+  # Redis缓存配置
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password:
+    timeout: 5000
+    database: 0
+
+  # 设置上传文件大小
+  servlet:
+    multipart.max-file-size: 100MB
+    multipart.max-request-size: 100MB
+
+  # 邮件服务器配置
+  mail:
+    host: smtpdm.aliyun.com
+    username: code@12pay.cc
+    password: mvSuiaJ45THQ6n
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            port: 465
+
+  # 上传文件配置
+web:
+  upload-path: E:\\img
+  uri: 127.0.0.1:5523

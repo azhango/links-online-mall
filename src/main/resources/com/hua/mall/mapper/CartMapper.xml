@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hua.mall.mapper.CartMapper">
+
+    <resultMap id="BaseResultMap" type="com.hua.mall.model.entity.Cart">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="productId" column="product_id" jdbcType="BIGINT"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="quantity" column="quantity" jdbcType="INTEGER"/>
+        <result property="selected" column="selected" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,product_id,user_id,
+        quantity,selected,create_time,
+        update_time
+    </sql>
+    <select id="selectCartList" resultType="com.hua.mall.model.vo.CartVO" parameterType="java.lang.Long">
+        select c.id           as id,
+               p.id           as productId,
+               c.user_id      as userId,
+               c.quantity     as quantity,
+               c.selected     as selected,
+               p.price        as price,
+               p.product_name as productName,
+               p.image        as productImage
+        from cart c
+                 left join product p on p.id = c.product_id
+        where c.user_id = #{userId}
+          and p.product_status = 1
+    </select>
+</mapper>
