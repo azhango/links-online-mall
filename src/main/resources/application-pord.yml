@@ -3,9 +3,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://huazll5510.mysql.rds.aliyuncs.com:3306/qf_mall
-    username: huauz
-    password: Huauz125510
+    url: jdbc:mysql://localhost:3306/qf_mall
+    username: admin
+    password: 123456
 
   # Redis缓存配置
   redis:
@@ -22,9 +22,12 @@ spring:
 
   # 邮件服务器配置
   mail:
-    host: smtpdm.aliyun.com
-    username: code@12pay.cc
-    password: mvSuiaJ45THQ6n
+    # SMTP
+    host: smtp.qq.com
+    # 邮箱
+    username: 
+    # 密码
+    password: 
     default-encoding: UTF-8
     properties:
       mail:
@@ -36,5 +39,7 @@ spring:
 
   # 上传文件配置
 web:
-  upload-path: E:\\img
+  # 上传路径
+  upload-path: 
+  # 上传IP+端口
   uri: 127.0.0.1:5523
