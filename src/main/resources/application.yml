@@ -39,7 +39,7 @@ spring:
 server:
   address: 0.0.0.0
 
-  port: 5523
+  port: 8080
 
   servlet:
     # session 失效时间 1 天
