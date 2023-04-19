@@ -20,6 +20,44 @@ spring:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
 
+  # 数据源
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://huazll5510.mysql.rds.aliyuncs.com:3306/qf_mall
+    username: huauz
+    password: Huauz125510
+
+  # Redis缓存配置
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    #    password:
+    timeout: 5000
+    database: 0
+
+  # 邮件服务器配置
+  mail:
+    # SMTP
+    host: smtp.qq.com
+    # 邮箱
+    username: mail_notice@foxmail.com
+    # 密码
+    password: bxjmyxtwwuccjhba
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            port: 465
+# 上传文件配置
+web:
+  # 上传路径
+  upload-path: E:\img
+  # 上传IP+端口
+  uri: 127.0.0.1:8080
+
 server:
   port: 8080
   servlet:
