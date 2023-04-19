@@ -75,9 +75,9 @@ public class UserController {
         if (userLoginRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        String userAccount = userLoginRequest.getAccount();
+        String emailAddress = userLoginRequest.getEmailAddress();
         String userPassword = userLoginRequest.getPassword();
-        String jwtToken = userService.userLogin(userAccount, userPassword, session);
+        String jwtToken = userService.userLogin(emailAddress, userPassword, session);
         return ResultUtils.success(jwtToken);
     }
 
@@ -144,14 +144,14 @@ public class UserController {
      */
     @PostMapping("/send_email")
     @ApiOperation("发送验证码")
-    public BaseResponse sendEmail(@RequestParam("emailAddress") String emailAddress) {
+    public BaseResponse sendEmail(@RequestParam String emailAddress) {
         // 1.检查邮件地址是否有效
         boolean validEmailAddress = EmailUtil.isValidEmailAddress(emailAddress);
         if (!validEmailAddress) {
             return ResultUtils.error(ErrorCode.SYSTEM_ERROR, "非法的邮件地址");
         }
-        String emailOld = userMapper.selectByEmailAddress(emailAddress);
-        if (emailOld != null) {
+        int emailCount = userMapper.selectByEmail(emailAddress);
+        if (emailCount > 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "邮箱已注册");
         }
         // 2.生成验证码

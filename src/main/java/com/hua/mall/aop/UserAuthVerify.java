@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -34,22 +35,14 @@ public class UserAuthVerify {
     @Resource
     private UserService userService;
 
+    @Autowired
+    private HttpServletRequest request;
+
     @Around("@annotation(authCheck)")
     public Object doInterceptor(ProceedingJoinPoint joinPoint, AuthCheck authCheck) throws Throwable {
-        List<String> anyRole = Arrays.stream(authCheck.anyRole()).filter(StringUtils::isNotBlank).collect(Collectors.toList());
         String mustRole = authCheck.mustRole();
-        // 获取 request
-        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
-        HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
         // 当前用户
         User currentUser = userService.loginStatus(request);
-        // 拥有任意权限
-        if (CollectionUtils.isNotEmpty(anyRole)) {
-            String userRole = currentUser.getUserRole();
-            if (!anyRole.contains(userRole)) {
-                throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
-            }
-        }
         // 拥有指定权限
         if (StringUtils.isNotBlank(mustRole)) {
             String userRole = currentUser.getUserRole();

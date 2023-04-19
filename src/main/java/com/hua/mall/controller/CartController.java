@@ -34,7 +34,8 @@ public class CartController {
     @Cacheable("CategoryList")
     public BaseResponse<List<CartVO>> list(HttpServletRequest request) {
         // 内部获取，防止横向越权
-        User currentUser = JwtUtil.getJwtToken(request);
+        String token = request.getHeader("token");
+        User currentUser = JwtUtil.getJwtToken(token);
         List<CartVO> cartList = cartService.cartList(currentUser.getId());
         return ResultUtils.success(cartList);
     }
@@ -42,7 +43,8 @@ public class CartController {
     @PostMapping("/add")
     @ApiOperation("添加")
     public BaseResponse<List<CartVO>> add(@RequestParam Long productId, @RequestParam Integer count, HttpServletRequest request) {
-        User currentUser = JwtUtil.getJwtToken(request);
+        String token = request.getHeader("token");
+        User currentUser = JwtUtil.getJwtToken(token);
         List<CartVO> cartVOS = cartService.addProduct(currentUser.getId(), productId, count);
         return ResultUtils.success(cartVOS);
     }
@@ -50,7 +52,8 @@ public class CartController {
     @PostMapping("/update")
     @ApiOperation("更新")
     public BaseResponse<List<CartVO>> update(@RequestParam Long productId, @RequestParam Integer count, HttpServletRequest request) {
-        User currentUser = JwtUtil.getJwtToken(request);
+        String token = request.getHeader("token");
+        User currentUser = JwtUtil.getJwtToken(token);
         List<CartVO> cartVOS = cartService.updateProduct(currentUser.getId(), productId, count);
         return ResultUtils.success(cartVOS);
     }
@@ -58,7 +61,8 @@ public class CartController {
     @PostMapping("/delete")
     @ApiOperation("删除")
     public BaseResponse<List<CartVO>> delete(@RequestParam Long productId, HttpServletRequest request) {
-        User currentUser = JwtUtil.getJwtToken(request);
+        String token = request.getHeader("token");
+        User currentUser = JwtUtil.getJwtToken(token);
         List<CartVO> cartVOS = cartService.deleteProduct(currentUser.getId(), productId);
         return ResultUtils.success(cartVOS);
     }
@@ -66,7 +70,8 @@ public class CartController {
     @PostMapping("/select")
     @ApiOperation("商品选择状态")
     public BaseResponse<List<CartVO>> selectState(@RequestParam Long productId, @RequestParam Integer selected, HttpServletRequest request) {
-        User currentUser = JwtUtil.getJwtToken(request);
+        String token = request.getHeader("token");
+        User currentUser = JwtUtil.getJwtToken(token);
         List<CartVO> cartVOS = cartService.selectState(currentUser.getId(), productId, selected);
         return ResultUtils.success(cartVOS);
     }
@@ -74,7 +79,8 @@ public class CartController {
     @PostMapping("/select_all")
     @ApiOperation("全部选择状态")
     public BaseResponse<List<CartVO>> selectAllState(@RequestParam Integer selected, HttpServletRequest request) {
-        User currentUser = JwtUtil.getJwtToken(request);
+        String token = request.getHeader("token");
+        User currentUser = JwtUtil.getJwtToken(token);
         List<CartVO> cartVOS = cartService.selectAllState(currentUser.getId(), selected);
         return ResultUtils.success(cartVOS);
     }

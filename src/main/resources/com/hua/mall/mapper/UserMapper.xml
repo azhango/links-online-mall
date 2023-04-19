@@ -27,9 +27,8 @@
         create_time,update_time,is_delete
     </sql>
 
-    <select id="selectByEmailAddress" resultMap="BaseResultMap"
-            resultType="java.lang.String">
-        select email_address
+    <select id="selectByEmail" resultType="java.lang.Integer">
+        select count(email_address)
         from user
         where email_address = #{email_address}
     </select>

@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
  */
 public interface UserMapper extends BaseMapper<User> {
 
-    String selectByEmailAddress(@Param("emailAddress") String emailAddress);
+    int selectByEmail(@Param("emailAddress") String emailAddress);
 }
 
 

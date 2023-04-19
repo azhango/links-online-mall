@@ -5,6 +5,7 @@ import com.hua.mall.service.EmailService;
 import org.redisson.Redisson;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,9 @@ public class EmailServiceImpl implements EmailService {
     @Resource
     private JavaMailSender mailSender;
 
+    @Autowired
+    private RedissonClient redissonClient;
+
     @Override
     public void sendSimpleEmail(String to, String subject, String text) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -42,14 +46,13 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public Boolean saveEmailToRedis(String emailAddress, String verificationCode) {
         // 创建客户端
-        RedissonClient client = Redisson.create();
         // 获取Key
-        RBucket<String> bucket = client.getBucket(emailAddress);
+        RBucket<String> bucket = redissonClient.getBucket(emailAddress);
         // 检查对象是否存在
         boolean exists = bucket.isExists();
         if (!exists) {
             // 设置Value 300S 过期
-            bucket.set(verificationCode, 300, TimeUnit.SECONDS);
+            bucket.set(verificationCode, 60, TimeUnit.SECONDS);
             return true;
         }
         return false;
@@ -58,9 +61,8 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public Boolean verifyMailbox(String emailAddress, String verificationCode) {
         // 创建客户端
-        RedissonClient client = Redisson.create();
         // 获取Key
-        RBucket<String> bucket = client.getBucket(emailAddress);
+        RBucket<String> bucket = redissonClient.getBucket(emailAddress);
         // 检查对象是否存在
         boolean exists = bucket.isExists();
         if (exists) {

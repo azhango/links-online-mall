@@ -2,25 +2,9 @@ spring:
   application:
     name: mumumall
 
-  # 邮件服务器配置
-  mail:
-    host: smtp.qq.com
-    # 账号
-    username:
-    # 邮箱专用密码
-    password:
-    default-encoding: UTF-8
-    properties:
-      mail:
-        smtp:
-          auth: true
-          socketFactory:
-            class: javax.net.ssl.SSLSocketFactory
-            port: 465
-
   # 默认 dev 环境
   profiles:
-    active: pord
+    active: prod
 
   # 支持 swagger
   mvc:
@@ -37,14 +21,12 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
 
 server:
-  address: 0.0.0.0
-
   port: 8080
-
   servlet:
     # session 失效时间 1 天
     session:
       timeout: 86400
+    context-path: /api
 
 mybatis-plus:
   configuration:

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.pagehelper.PageInfo;
 import com.hua.mall.common.PageRequest;
 import com.hua.mall.model.dto.OrderCreateRequest;
+import com.hua.mall.model.dto.OrderQueryRequest;
 import com.hua.mall.model.entity.Order;
 import com.hua.mall.model.vo.OrderStatisticsVO;
 import com.hua.mall.model.vo.OrderVO;
@@ -39,11 +40,11 @@ public interface OrderService extends IService<Order> {
     /**
      * 查询所有订单
      *
-     * @param pageRequest 分页信息
+     * @param orderQueryRequest 分页信息
      * @param request
      * @return 所有订单信息
      */
-    PageInfo selectList(PageRequest pageRequest, HttpServletRequest request);
+    PageInfo selectList(OrderQueryRequest orderQueryRequest, HttpServletRequest request);
 
     /**
      * 取消订单

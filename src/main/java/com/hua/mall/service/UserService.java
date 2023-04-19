@@ -25,11 +25,11 @@ public interface UserService extends IService<User> {
     /**
      * 用户登录
      *
-     * @param userAccount  账号
+     * @param emailAddress  账号
      * @param userPassword 密码
      * @return 返回登录用户的信息
      */
-    String userLogin(String userAccount, String userPassword, HttpSession session);
+    String userLogin(String emailAddress, String userPassword, HttpSession session);
 
     /**
      * 获取当前登录用户信息

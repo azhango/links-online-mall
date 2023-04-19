@@ -21,7 +21,7 @@ public interface CommonConstant {
     /**
      * 来自那里（配置邮箱）
      */
-    String MAIL_FROM = "code@12pay.cc";
+    String MAIL_FROM = "mail_notice@foxmail.com";
 
     /**
      * 主题

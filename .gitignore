@@ -6,7 +6,7 @@ target/
 dump.rdb
 mvnw
 mvnw.cmd
-
+src/main/resources/application-prod.yml
 ### STS ###
 .apt_generated
 .classpath

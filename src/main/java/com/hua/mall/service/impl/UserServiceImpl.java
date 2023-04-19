@@ -15,12 +15,17 @@ import com.hua.mall.utils.EmailUtil;
 import com.hua.mall.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RBucket;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import java.util.concurrent.TimeUnit;
 
 import static com.hua.mall.constant.UserConstant.*;
 
@@ -41,6 +46,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Resource
     private EmailService emailService;
 
+    @Autowired
+    private RedissonClient redissonClient;
+
     /**
      * 用户注册
      *
@@ -49,24 +57,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      */
     @Override
     public long userRegister(UserRegisterRequest userRegisterRequest) {
-        String account = userRegisterRequest.getAccount();
         String password = userRegisterRequest.getPassword();
+        String checkPassword = userRegisterRequest.getCheckPassword();
         String emailAddress = userRegisterRequest.getEmailAddress();
         String verificationCode = userRegisterRequest.getVerificationCode();
         // 1. 校验
-
-        if (!ReUtil.isMatch(USER_ACCOUNT_CHECK, account)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号错误或包含特殊字符");
-        }
         // 验证邮箱是否正确
         boolean validEmailAddress = EmailUtil.isValidEmailAddress(emailAddress);
         if (!validEmailAddress) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "非法邮件地址");
         }
-        synchronized (account.intern()) {
+        // 判断两个密码是否一致
+        if (!password.equals(checkPassword)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "两次密码不一致");
+        }
+        synchronized (emailAddress.intern()) {
             // 邮箱是否已注册
-            String emailOld = userMapper.selectByEmailAddress(emailAddress);
-            if (emailOld != null) {
+            int emailCount = userMapper.selectByEmail(emailAddress);
+            if (emailCount > 0) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "邮箱已注册");
             }
             // 验证码
@@ -76,16 +84,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             }
             // 查询是否存在
             QueryWrapper<User> wrapper = new QueryWrapper<>();
-            wrapper.eq("user_account", account);
+            wrapper.eq("email_address", emailAddress);
             long count = userMapper.selectCount(wrapper);
             if (count > 0) {
-                throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号已存在");
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "邮箱已存在");
             }
             // 2. 加密
             String encryptPassword = DigestUtils.md5DigestAsHex((SALT + password).getBytes());
             // 3. 插入数据
             User user = new User();
-            user.setUserAccount(account);
+            user.setUserAccount(emailAddress);
             user.setUserPassword(encryptPassword);
             user.setEmailAddress(emailAddress);
             // 判断是否插入数据成功
@@ -100,24 +108,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     /**
      * 用户登录
      *
-     * @param account  账号
-     * @param password 密码
+     * @param emailAddress 账号
+     * @param password     密码
      * @return 返回登录用户的信息
      */
     @Override
-    public String userLogin(String account, String password, HttpSession session) {
+    public String userLogin(String emailAddress, String password, HttpSession session) {
         // 1. 校验
-        if (StringUtils.isAnyEmpty(account, password)) {
+        if (StringUtils.isAnyEmpty(emailAddress, password)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号或密码不能为空");
         }
-        if (!ReUtil.isMatch(USER_ACCOUNT_CHECK, account)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号错误或包含特殊字符");
+        // 验证邮箱格式
+        if (!EmailUtil.isValidEmailAddress(emailAddress)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "邮箱格式错误");
         }
         // 2. 加密
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + password).getBytes());
         // 3. 查询用户是否存在并返回登录
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_account", account);
+        wrapper.eq("email_address", emailAddress);
         wrapper.eq("user_password", encryptPassword);
         User user = userMapper.selectOne(wrapper);
         // 4. 设置登录态
@@ -126,19 +135,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号不存在或密码错误");
         }
         String token = JwtUtil.getUserToken(user);
-        session.setAttribute("jwt_token", token);
-        return "登录成功";
+        RBucket<Object> bucket = redissonClient.getBucket(String.valueOf(user.getId()));
+        if (!bucket.isExists()) {
+            bucket.set(token, 604800, TimeUnit.SECONDS);
+        }
+        return token;
     }
 
     /**
      * 获取当前登录用户信息
      *
-     * @param request 用户登录态
+     * @param request
      * @return 返回当前用户登录的信息
      */
     @Override
     public User loginStatus(HttpServletRequest request) {
-        User currentUser = JwtUtil.getJwtToken(request);
+        String token = request.getHeader("token");
+        User currentUser = JwtUtil.getJwtToken(token);
         // 2. 通过ID主键查找当前用户
         long userId = currentUser.getId();
         currentUser = this.getById(userId);
@@ -160,8 +173,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
         // 刷新Token
-        HttpSession session = request.getSession();
-        session.removeAttribute("jwt_token");
+        RBucket<String> bucket = redissonClient.getBucket(String.valueOf(currentUser.getId()));
+        String token = "";
+        if (bucket.isExists()) {
+            token = bucket.get();
+        } else {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+        }
     }
 
 }

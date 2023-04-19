@@ -17,8 +17,8 @@ public class UserLoginRequest implements Serializable {
     /**
      * 账号
      */
-    @NotNull(message = "账号为空")
-    private String account;
+    @NotNull(message = "邮箱为空")
+    private String emailAddress;
     /**
      * 密码
      */

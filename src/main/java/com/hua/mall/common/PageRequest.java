@@ -1,7 +1,9 @@
 package com.hua.mall.common;
 
 import com.hua.mall.constant.CommonConstant;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 分页请求
@@ -9,17 +11,19 @@ import lombok.Data;
  * @author hua
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PageRequest {
 
     /**
      * 当前页号
      */
-    private long current = 1;
+    private int current = 1;
 
     /**
      * 页面大小
      */
-    private long pageSize = 10;
+    private int pageSize = 10;
 
     /**
      * 排序字段

@@ -24,17 +24,17 @@ import java.util.Date;
 public class JwtUtil {
 
     // key
-    public static final String JWT_KEY = "jwt_key";
+    public static final String JWT_KEY = "key";
     // token
-    public static final String JWT_TOKEN = "jwt_token";
+    public static final String JWT_TOKEN = "token";
     // 用户id
-    public static final String JWT_USER_ID = "jwt_user_id";
+    public static final String JWT_USER_ID = "user_id";
     // 用户名
-    public static final String JWT_USER_NAME = "jwt_user_name";
+    public static final String JWT_USER_NAME = "user_name";
     // 用户权限
-    public static final String JWT_USER_ROLE = "jwt_user_role";
+    public static final String JWT_USER_ROLE = "user_role";
     // 缓存到期时间
-    public static final Long JWT_EXPIRED_TIME = 1000 * 60 * 60 * 24 * 7L;
+    public static final Long TOKEN_EXPIRED_TIME = 1000 * 60 * 60 * 24 * 7L;
 
     /**
      * 根据用户返回Token
@@ -52,21 +52,16 @@ public class JwtUtil {
                 .withClaim(JWT_USER_NAME, user.getUserAccount())
                 .withClaim(JWT_USER_ROLE, user.getUserRole())
                 // 过期时间
-                .withExpiresAt(new Date(System.currentTimeMillis() + JWT_EXPIRED_TIME))
+                .withExpiresAt(new Date(System.currentTimeMillis() + TOKEN_EXPIRED_TIME))
                 .sign(algorithm);
         return jwtToken;
     }
 
     /**
-     * 根据 Request Header 参数获取用户信息
-     *
-     * @param request Http 请求
-     * @return 用户
+     * @param token
+     * @return
      */
-    public static User getJwtToken(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        // 获取请中的token
-        String token = (String) session.getAttribute(JWT_TOKEN);
+    public static User getJwtToken(String token) {
         if (!StringUtils.hasText(token)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "Token 不能为空");
         }

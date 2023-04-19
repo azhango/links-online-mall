@@ -15,20 +15,20 @@ public class UserRegisterRequest implements Serializable {
 
     private static final long serialVersionUID = 3191241716373120793L;
     /**
-     * 账号
+     * 邮箱
      */
-    @NotNull(message = "账号为空")
-    private String account;
+    @NotNull(message = "邮箱为空")
+    private String emailAddress;
     /**
      * 密码
      */
     @NotNull(message = "密码为空")
     private String password;
     /**
-     * 邮箱
+     * 密码
      */
-    @NotNull(message = "邮箱为空")
-    private String emailAddress;
+    @NotNull(message = "确认密码为空")
+    private String checkPassword;
     /**
      * 验证码
      */

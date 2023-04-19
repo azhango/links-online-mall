@@ -18,6 +18,7 @@ import com.hua.mall.mapper.OrderItemMapper;
 import com.hua.mall.mapper.OrderMapper;
 import com.hua.mall.mapper.ProductMapper;
 import com.hua.mall.model.dto.OrderCreateRequest;
+import com.hua.mall.model.dto.OrderQueryRequest;
 import com.hua.mall.model.dto.OrderStatisticsQuery;
 import com.hua.mall.model.entity.Order;
 import com.hua.mall.model.entity.OrderItem;
@@ -248,18 +249,18 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
     /**
      * 查询所有订单
      *
-     * @param pageRequest 分页信息
+     * @param orderQueryRequest 分页信息
      * @param request
      * @return 所有订单信息
      */
     @Override
-    public PageInfo selectList(PageRequest pageRequest, HttpServletRequest request) {
+    public PageInfo selectList(OrderQueryRequest orderQueryRequest, HttpServletRequest request) {
         Long userId = userService.loginStatus(request).getId();
         // 当前页
-        long current = pageRequest.getCurrent();
+        int pageNum = orderQueryRequest.getCurrent();
         // 当前页记录数
-        long pageSize = pageRequest.getPageSize();
-        PageHelper.startPage((int) current, (int) pageSize);
+        int pageSize = orderQueryRequest.getPageSize();
+        PageHelper.startPage(pageNum, pageSize);
         // 查找所有订单信息
         QueryWrapper<Order> orderWrapper = new QueryWrapper<>();
         orderWrapper
@@ -386,10 +387,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
     @Override
     public PageInfo listForAdmin(PageRequest pageRequest) {
         // 当前页
-        long current = pageRequest.getCurrent();
+        int current = pageRequest.getCurrent();
         // 当前页记录数
-        long pageSize = pageRequest.getPageSize();
-        PageHelper.startPage((int) current, (int) pageSize);
+        int pageSize = pageRequest.getPageSize();
+        PageHelper.startPage(current, pageSize);
         // 查找所有订单信息
         QueryWrapper<Order> orderWrapper = new QueryWrapper<>();
         orderWrapper.orderByDesc("create_time");
