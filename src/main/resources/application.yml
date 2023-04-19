@@ -53,6 +53,7 @@ spring:
           socketFactory:
             class: javax.net.ssl.SSLSocketFactory
             port: 465
+
 # 上传文件配置
 web:
   # 上传路径
