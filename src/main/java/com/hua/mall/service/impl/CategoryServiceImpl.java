@@ -16,13 +16,17 @@ import com.hua.mall.model.dto.UpdateCategoryRequest;
 import com.hua.mall.model.entity.Category;
 import com.hua.mall.model.vo.CategoryVO;
 import com.hua.mall.service.CategoryService;
+import org.redisson.api.RBucket;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author hua
@@ -35,6 +39,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
 
     @Resource
     private CategoryMapper categoryMapper;
+
+    @Autowired
+    private RedissonClient redissonClient;
 
     /**
      * 添加分类
@@ -126,8 +133,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
     @Override
     public Page<Category> listCategoryForAdmin(PageRequest pageRequest) {
         // 查询分页数据
-        long current = pageRequest.getCurrent();
-        long pageSize = pageRequest.getPageSize();
+        int current = pageRequest.getCurrent();
+        int pageSize = pageRequest.getPageSize();
         String sortField = pageRequest.getSortField();
         String sortOrder = pageRequest.getSortOrder();
         QueryWrapper<Category> wrapper = new QueryWrapper<>();
@@ -142,7 +149,6 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
      * @return
      */
     @Override
-    @Cacheable(value = "listCategoryForCustomer")
     public List<CategoryVO> listCategoryForCustomer(Long categoryId) {
         ArrayList<CategoryVO> categoryVOList = new ArrayList<>();
         recursiveFindCategoryDirectory(categoryVOList, categoryId);
