@@ -19,13 +19,15 @@ spring:
   jackson:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
+    serialization:
+      WRITE-BIGDECIMAL-AS-PLAIN: true
 
   # 数据源
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://huazll5510.mysql.rds.aliyuncs.com:3306/qf_mall
-    username: huauz
-    password: Huauz125510
+    url: jdbc:mysql://localhost:3306/qf_mall
+    username: root
+    password: 123456
 
   # Redis缓存配置
   redis:
