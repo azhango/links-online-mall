@@ -3,14 +3,14 @@ package com.hua.mall.config;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * @Description todo
+ * @Description Redisson 配置
  * @Author JingHua
  * @Date 2023/4/19 20:51
  */
-@Component
+@Configuration
 public class RedissonConfig {
 
     @Bean

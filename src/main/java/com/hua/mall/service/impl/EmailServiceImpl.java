@@ -49,9 +49,8 @@ public class EmailServiceImpl implements EmailService {
         // 获取Key
         RBucket<String> bucket = redissonClient.getBucket(emailAddress);
         // 检查对象是否存在
-        boolean exists = bucket.isExists();
-        if (!exists) {
-            // 设置Value 300S 过期
+        if (!bucket.isExists()) {
+            // 不存在 设置Value 60S 过期
             bucket.set(verificationCode, 60, TimeUnit.SECONDS);
             return true;
         }

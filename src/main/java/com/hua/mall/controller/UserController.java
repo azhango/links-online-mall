@@ -157,8 +157,8 @@ public class UserController {
         // 2.生成验证码
         String verificationCode = EmailUtil.getVerificationCode();
         // 3.添加到Redis
-        Boolean saveEmailToRedis = emailService.saveEmailToRedis(emailAddress, verificationCode);
-        if (!saveEmailToRedis) {
+        Boolean result = emailService.saveEmailToRedis(emailAddress, verificationCode);
+        if (!result) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "验证码已发送,请稍后再试");
         }
         // 4.发送邮箱

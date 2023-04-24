@@ -9,10 +9,7 @@ import com.hua.mall.service.ProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -32,9 +29,9 @@ public class ProductController {
     @Resource
     private ProductService productService;
 
-    @GetMapping("/detail")
+    @GetMapping("/detail/{id}")
     @ApiOperation("商品详情")
-    public BaseResponse<Product> detail(@RequestParam Long id) {
+    public BaseResponse<Product> detail(@PathVariable Long id) {
         Product productDetail = productService.detail(id);
         return ResultUtils.success(productDetail);
     }
@@ -47,7 +44,7 @@ public class ProductController {
      */
     @GetMapping("/list")
     @ApiOperation("批量查询和模糊查询")
-    public BaseResponse<Page<Product>> list(@Valid ProductQueryRequest productListRequest) {
+    public BaseResponse<Page<Product>> list(@Valid @RequestBody ProductQueryRequest productListRequest) {
         Page<Product> productPage = productService.searchProduct(productListRequest);
         return ResultUtils.success(productPage);
     }
