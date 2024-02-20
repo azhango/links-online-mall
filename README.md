@@ -8,20 +8,17 @@ mall项目纯后端项目不包含前端项目，全开源可二次开发。**�
 
 ## 技术选型
 
-|--|--|
-|SpringBoot|MyBatisPlus|
-SpringBoot
-
-MyBatisPlus
-
-Redis
-
-JWT
-
-Lombok
-
-Hutool
-
-PageHelper
-
-Swagger-UI
+| 技术名称 | 版本 |
+| --- | --- |
+| SpringBoot | `2.7.4` |
+| MySQL|`8.0`
+| Mybatis |`2.2.2`|
+| MyBatisPlus | `3.5.2` |
+|Redis | `7.0`  |
+|Redisson | `3.17.7` |
+|JWT | `3.18.2` |
+|Lombok | `1.18.24` |
+|Apache POI| `4.1.2`|
+|Hutool | `5.8.8` |
+|PageHelper | `1.4.1` |
+|Swagger+knife4j | `3.0.3` |
